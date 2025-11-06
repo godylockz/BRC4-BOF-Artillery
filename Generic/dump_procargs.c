@@ -51,7 +51,7 @@ void coffee(char* argv[], int argc,  WCHAR** dispatch) {
         goto cleanUp;
     }
     commandLineBuffer[parameters.CommandLine.Length / sizeof(WCHAR)] = L'\0';
-    BadgerDispatch(dispatch, "\n[*] CmdLine Args: %ls\n", commandLineBuffer);
+    BadgerDispatchW(dispatch, L"\n[*] CmdLine Args: %s\n", commandLineBuffer);
 
     cleanUp:
         BadgerFree((PVOID*)&commandLineBuffer);

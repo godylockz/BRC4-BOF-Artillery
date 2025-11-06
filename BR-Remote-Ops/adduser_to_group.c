@@ -22,7 +22,7 @@ VOID AddUserToGroup(WCHAR* lpswzServer, WCHAR* lpswzUserName, WCHAR* lpswzGroupN
 	NET_API_STATUS dwErrorCode = ERROR_SUCCESS;
 	LOCALGROUP_MEMBERS_INFO_3 mi[1] = { 0 };
     if (local == 0) {
-        BadgerDispatch(g_dispatch, "[+] Adding '%ls' user to '%ls' domain group on '%ls'\n", lpswzUserName, lpswzGroupName, lpswzServer);
+        BadgerDispatchW(g_dispatch, L"[+] Adding '%s' user to '%s' domain group on '%s'\n", lpswzUserName, lpswzGroupName, lpswzServer);
         dwErrorCode = Netapi32$NetGroupAddUser(lpswzServer, lpswzGroupName, lpswzUserName);
         if (dwErrorCode != ERROR_SUCCESS) {
             BadgerDispatch(g_dispatch, "[-] Error NetGroupAddUser: %lu\n", dwErrorCode);
@@ -32,9 +32,9 @@ VOID AddUserToGroup(WCHAR* lpswzServer, WCHAR* lpswzUserName, WCHAR* lpswzGroupN
 		mi[0].lgrmi3_domainandname = BadgerAlloc(1024);
         Msvcrt$swprintf_s(mi[0].lgrmi3_domainandname, 1024, L"%s", lpswzUserName);
 		if (local == 1) {
-            BadgerDispatch(g_dispatch, "[+] Adding '%ls' user to the '%ls' remote localgroup on '%ls'\n", lpswzUserName, lpswzGroupName, lpswzServer);
+            BadgerDispatchW(g_dispatch, L"[+] Adding '%s' user to the '%s' remote localgroup on '%s'\n", lpswzUserName, lpswzGroupName, lpswzServer);
 		} else if ( (local == 2) && (! lpswzServer)) {
-            BadgerDispatch(g_dispatch, "[+] Adding '%ls' user to the '%ls' localhost localgroup\n", lpswzUserName, lpswzGroupName);
+            BadgerDispatchW(g_dispatch, L"[+] Adding '%s' user to the '%s' localhost localgroup\n", lpswzUserName, lpswzGroupName);
         }
         dwErrorCode = Netapi32$NetLocalGroupAddMembers(lpswzServer, lpswzGroupName, 3, (LPBYTE)mi, 1);
 		if (ERROR_SUCCESS != dwErrorCode) {
@@ -76,12 +76,12 @@ VOID coffee(char** argv, int argc, WCHAR** dispatch) {
         return;
     }
     ConvertCharToWChar(username, &lpswzUserName);
-    BadgerDispatch(dispatch, "[*] Username: %ls\n", lpswzUserName);
+    BadgerDispatchW(dispatch, L"[*] Username: %s\n", lpswzUserName);
     ConvertCharToWChar(groupname, &lpswzGroupName);
-    BadgerDispatch(dispatch, "[*] Group name: %ls\n", lpswzGroupName);
+    BadgerDispatchW(dispatch, L"[*] Group name: %s\n", lpswzGroupName);
     if (argc == 4) {
         ConvertCharToWChar(servername, &lpswzServerName);
-        BadgerDispatch(dispatch, "[*] Server name: %ls\n", lpswzServerName);
+        BadgerDispatchW(dispatch, L"[*] Server name: %s\n", lpswzServerName);
     }
 	AddUserToGroup(lpswzServerName, lpswzUserName, lpswzGroupName, local);
     BadgerFree((PVOID*)&lpswzUserName);

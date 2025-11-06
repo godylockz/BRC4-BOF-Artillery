@@ -26,7 +26,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
     if (argc == 2) {
         ConvertCharToWChar(argv[1], &whostname);
     }
-	BadgerDispatch(dispatch, "[+] Enabling user: '%ls\\%ls'\n", (whostname ? whostname : L"localhost"), wusername);
+	BadgerDispatchW(dispatch, L"[+] Enabling user: '%s\\%s'\n", (whostname ? whostname : L"localhost"), wusername);
 
 	USER_INFO_1017 NewFlags = {0};	
 	NET_API_STATUS dwErrorCode = NERR_Success;

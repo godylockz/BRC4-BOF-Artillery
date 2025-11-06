@@ -66,7 +66,7 @@ DWORD stopTask(const wchar_t * server, const wchar_t * taskname) {
 
 	// Connect to the server
 	// HRESULT Connect( VARIANT serverName, VARIANT user, VARIANT domain, VARIANT password );
-    BadgerDispatch(g_dispatch, "[+] Connecting to \"%ls\"\n", Vserver.bstrVal);
+    BadgerDispatchW(g_dispatch, L"[+] Connecting to \"%s\"\n", Vserver.bstrVal);
 	hr = pService->lpVtbl->Connect(pService, Vserver, VNull, VNull, VNull);
 	if (FAILED(hr)) {
 		BadgerDispatch(g_dispatch, "[-] Error connecting to server: %lX\n", hr);
@@ -97,7 +97,7 @@ DWORD stopTask(const wchar_t * server, const wchar_t * taskname) {
 	// Get a reference to the target task
 	hr = pRootFolder->lpVtbl->GetTask(pRootFolder, taskpath, &pRegisteredTask);
 	if (FAILED(hr)) {
-        BadgerDispatch(g_dispatch, "[-] Error finding the task: %S: %lX\n", taskpath, hr);
+        BadgerDispatchW(g_dispatch, L"[-] Error finding the task: %s: %lX\n", taskpath, hr);
         BadgerDispatch(g_dispatch, "[!] NOTE: You must specify the full path and name of the task\n");
 		goto stopTask_end;
 	}
@@ -105,7 +105,7 @@ DWORD stopTask(const wchar_t * server, const wchar_t * taskname) {
 	// Actually stop the task
 	hr = pRegisteredTask->lpVtbl->Stop(pRegisteredTask, 0);
 	if (FAILED(hr)) {
-		BadgerDispatch(g_dispatch, "[-] Error stopping task: %S: %lX\n", taskpath, hr);
+		BadgerDispatchW(g_dispatch, L"[-] Error stopping task: %s: %lX\n", taskpath, hr);
 		goto stopTask_end;
 	}
 
@@ -157,7 +157,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
     WCHAR* taskname = NULL;
     ConvertCharToWChar(argv[0], &hostname);
     ConvertCharToWChar(argv[1], &taskname);
-    BadgerDispatch(g_dispatch, "[+] Stopping task '%ls' on '%ls'\n", taskname, hostname );
+    BadgerDispatchW(g_dispatch, L"[+] Stopping task '%s' on '%s'\n", taskname, hostname );
     stopTask(hostname, taskname);
     BadgerFree((PVOID*)&hostname);
     BadgerFree((PVOID*)&taskname);

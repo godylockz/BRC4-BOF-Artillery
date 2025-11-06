@@ -99,7 +99,7 @@ VOID ListProcessHandles(DWORD pid) {
         } 
         // (unless it has an access of 0x0012019f, on which NtQueryObject could hang)
         if (handle.AccessMask == 0x0012019f) {
-            BadgerDispatch(g_dispatch, "[*] [%d] %ls: (did not get name)\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer );
+            BadgerDispatchW(g_dispatch, L"[*] [%d] %s: (did not get name)\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer );
             continue;
         }
         objectNameInfo = Kernel32$HeapAlloc(Kernel32$GetProcessHeap(), HEAP_ZERO_MEMORY, 0x1000);
@@ -116,17 +116,15 @@ VOID ListProcessHandles(DWORD pid) {
             }
             dwErrorCode = (DWORD)Ntdll$NtQueryObject(dupHandle, ObjectNameInformation, objectNameInfo, returnLength, NULL);
             if (!NT_SUCCESS(dwErrorCode)) {
-                BadgerDispatch(g_dispatch, "[*] [%d] %ls: (could not get name)\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer );
+                BadgerDispatchW(g_dispatch, L"[*] [%d] %s: (could not get name)\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer );
                 continue;
             }
         }
         objectName = *(PUNICODE_STRING)objectNameInfo;
         if (objectName.Length) {
-            BadgerDispatch(g_dispatch, "0x%-10d| %-25ls| %-20ls\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer, objectName.Buffer);
-            // BadgerDispatch(g_dispatch, "[*] [%d] %ls: %ls\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer, objectName.Buffer);
+            BadgerDispatchW(g_dispatch, L"0x%-10d| %-25s| %-20s\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer, objectName.Buffer);
         } else {
-            BadgerDispatch(g_dispatch, "0x%-10d| %-25ls| (unnamed)\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer);
-            // BadgerDispatch(g_dispatch, "[*] [%d] %ls: (unnamed)\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer );
+            BadgerDispatchW(g_dispatch, L"0x%-10d| %-25s| (unnamed)\n", handle.HandleValue, objectTypeInfo->TypeName.Buffer);
         }
     }
     dwErrorCode = ERROR_SUCCESS;

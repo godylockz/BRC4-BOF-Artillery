@@ -433,7 +433,7 @@ HRESULT _adcs_request_SubmitEnrollment(IX509Enrollment * pEnrollment, BSTR bstrC
 			}
 			case CR_DISP_UNDER_SUBMISSION:
 			{
-				BadgerDispatch(g_dispatch, "[*] CA Response   : The certificate is still pending: %ls\n", bstrDispositionMessage);
+				BadgerDispatchW(g_dispatch, L"[*] CA Response   : The certificate is still pending: %s\n", bstrDispositionMessage);
 				BadgerDispatch(g_dispatch, "[*] Retry %d of %d. Sleeping %d seconds...\n", nRetry, CERT_REQUEST_RETRIES, CERT_REQUEST_TIMEOUT/1000);
 				Kernel32$Sleep(CERT_REQUEST_TIMEOUT);
 				hr = pCertRequest2->lpVtbl->RetrievePending(pCertRequest2, pRequestId, bstrCA, &pDisposition);
@@ -443,7 +443,7 @@ HRESULT _adcs_request_SubmitEnrollment(IX509Enrollment * pEnrollment, BSTR bstrC
 			default:
 			{
 				pCertRequest2->lpVtbl->GetLastStatus(pCertRequest2, &hr);
-				BadgerDispatch(g_dispatch, "CA Response  : The submission failed: %ls (0x%08lx)\n", bstrDispositionMessage, hr);
+				BadgerDispatchW(g_dispatch, L"CA Response  : The submission failed: %s (0x%08lx)\n", bstrDispositionMessage, hr);
 				goto fail;
 			}
 		} // end check of current disposition
@@ -517,10 +517,10 @@ HRESULT adcs_request(WCHAR* wCertAuthority, WCHAR* wTemplate, WCHAR* wSubject, W
 	// Get the alt name
 	SAFE_SYS_FREE(bstrAltName);
 	bstrAltName = Oleaut32$SysAllocString(wAltName);
-	BadgerDispatch(g_dispatch, "[*] CA            : %ls\n", bstrCA);
-	BadgerDispatch(g_dispatch, "[*] Template      : %ls\n", bstrTemplate);
-	BadgerDispatch(g_dispatch, "[*] Subject       : %ls\n", bstrSubject);
-	BadgerDispatch(g_dispatch, "[*] AltName (%ls) : %ls\n", (dns) ? L"dns" : L"upn", (bstrAltName ? bstrAltName : L"N/A"));
+	BadgerDispatchW(g_dispatch, L"[*] CA            : %s\n", bstrCA);
+	BadgerDispatchW(g_dispatch, L"[*] Template      : %s\n", bstrTemplate);
+	BadgerDispatchW(g_dispatch, L"[*] Subject       : %s\n", bstrSubject);
+	BadgerDispatchW(g_dispatch, L"[*] AltName (%s) : %s\n", (dns) ? L"dns" : L"upn", (bstrAltName ? bstrAltName : L"N/A"));
 
 	// Initialize COM
 	hr = Ole32$CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
@@ -563,10 +563,10 @@ HRESULT adcs_request(WCHAR* wCertAuthority, WCHAR* wTemplate, WCHAR* wSubject, W
 	// Display the certificate
 	BadgerDispatch(g_dispatch, "[*] cert.pem      :\n");
 	BadgerDispatch(g_dispatch, "-----BEGIN RSA PRIVATE KEY-----\n");
-	BadgerDispatch(g_dispatch, "%ls", pPrivatePEM);
+	BadgerDispatchW(g_dispatch, L"%s", pPrivatePEM);
 	BadgerDispatch(g_dispatch, "-----END RSA PRIVATE KEY-----\n");
 	BadgerDispatch(g_dispatch, "-----BEGIN CERTIFICATE-----\n");
-	BadgerDispatch(g_dispatch, "%ls", bstrCertificate);
+	BadgerDispatchW(g_dispatch, L"%s", bstrCertificate);
 	BadgerDispatch(g_dispatch, "-----END CERTIFICATE-----\n");
 	BadgerDispatch(g_dispatch, "[*] Convert with  : 'openssl pkcs12 -in cert.pem -keyex -CSP \"Microsoft Enhanced Cryptographic Provider v1.0\" -export -out cert.pfx'\n");
 
@@ -637,7 +637,7 @@ void coffee(char **argv, int argc, WCHAR** dispatch) {
 		dns = TRUE;
 	}
 
-	BadgerDispatch(dispatch, "[+] Requesting '%S' certificate from '%S' for the current user\n", wTemplate, wCertAuthority);
+	BadgerDispatchW(dispatch, L"[+] Requesting '%s' certificate from '%s' for the current user\n", wTemplate, wCertAuthority);
 	hr = adcs_request(wCertAuthority, wTemplate, wSubject, wAltName, bInstall, bMachine, baddAppPolicy, dns);
 	if (hr != S_OK) {
 		BadgerDispatch(dispatch, "[-] ADCS request failed: 0x%08lx\n", hr);

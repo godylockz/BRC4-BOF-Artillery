@@ -194,7 +194,7 @@ DWORD createTask(const wchar_t * server, wchar_t * taskpath, const wchar_t* xmld
 	}
 
 	// Connect to the server
-	BadgerDispatch(g_dispatch, "[+] Connecting to \"%ls\"\n", Vserver.bstrVal);
+	BadgerDispatchW(g_dispatch, L"[+] Connecting to \"%s\"\n", Vserver.bstrVal);
 	hr = pService->lpVtbl->Connect(pService, Vserver, VNull, VNull, VNull);
 	if (FAILED(hr)) {
 		BadgerDispatch(g_dispatch, "[-] Error connecting to server: %lX\n", hr);
@@ -303,13 +303,13 @@ DWORD createTask(const wchar_t * server, wchar_t * taskpath, const wchar_t* xmld
 			if (FAILED(hr)) {
 				BSTR errorpath = NULL;
 				pRootFolder->lpVtbl->get_Path(pRootFolder, &errorpath);
-				BadgerDispatch(g_dispatch, "[-] Error creating task folder %ls\\%ls: %lX\n", errorpath, BSTRtaskpath, hr);
+				BadgerDispatchW(g_dispatch, L"[-] Error creating task folder %s\\%s: %lX\n", errorpath, BSTRtaskpath, hr);
 				Oleaut32$SysFreeString(errorpath);
 				goto createTask_end;
 			} else {
 				BSTR successpath = NULL;
 				pRootFolder->lpVtbl->get_Path(pRootFolder, &successpath);
-				BadgerDispatch(g_dispatch, "[+] Created task folder: %ls\\%ls\n", successpath, BSTRtaskpath);
+				BadgerDispatchW(g_dispatch, L"[+] Created task folder: %s\\%s\n", successpath, BSTRtaskpath);
 				Oleaut32$SysFreeString(successpath);
 			}
 		} // end we mustcreate a folder
@@ -327,12 +327,12 @@ DWORD createTask(const wchar_t * server, wchar_t * taskpath, const wchar_t* xmld
 		Vthisuser.vt = VT_BSTR;
 		Vthisuser.bstrVal = BSTRthisuser;
 		taskType = TASK_LOGON_INTERACTIVE_TOKEN;
-		BadgerDispatch(g_dispatch, "[+] Created task path for user: %ls\n", Vthisuser.bstrVal);
+		BadgerDispatchW(g_dispatch, L"[+] Created task path for user: %s\n", Vthisuser.bstrVal);
 	} else if (mode == SCHTASKS_SYSTEM) {
 		Vthisuser.vt = VT_BSTR;
 		Vthisuser.bstrVal = BSTRsystem;
 		taskType = TASK_LOGON_SERVICE_ACCOUNT;
-		BadgerDispatch(g_dispatch, "[+] Created task path for user: %ls\n", Vthisuser.bstrVal);
+		BadgerDispatchW(g_dispatch, L"[+] Created task path for user: %s\n", Vthisuser.bstrVal);
 	} else if (mode == SCHTASKS_XML_PRINCIPAL) {
 		taskType = TASK_LOGON_NONE;
 		BadgerDispatch(g_dispatch, "[+] Created task path for principal\n");
@@ -458,7 +458,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 	if (BadgerStrcmp(argv[4], "true") == 0) {
 		bForce = TRUE;
 	}
-	BadgerDispatch(dispatch, "[+] Creating scheduled task:\n  - Hostname: %ls\n  - Task path: %ls\n  - Mode: %s\n  - Force: %s\n", whostname, wtaskpath, argv[3], (bForce ? "True" : "False"));
+	BadgerDispatchW(dispatch, L"[+] Creating scheduled task:\n  - Hostname: %s\n  - Task path: %s\n  - Force: %s\n", whostname, wtaskpath, (bForce ? L"True" : L"False"));
 	createTask(whostname, wtaskpath, wxmltask, nMode, bForce);
 
 	BadgerFree((PVOID*)&wxmltask);

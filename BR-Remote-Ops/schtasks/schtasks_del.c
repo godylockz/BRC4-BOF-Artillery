@@ -72,30 +72,30 @@ DWORD deleteTask(WCHAR* server, WCHAR* taskname, BOOL isfolder) {
 	if (isfolder) {
 		hr = pRootFolder->lpVtbl->DeleteFolder(pRootFolder, taskpath, 0);
 		if (FAILED(hr)) {
-			BadgerDispatch(g_dispatch, "[-] Error deleting task folder %S: %lX\n", taskpath, hr);
+			BadgerDispatchW(g_dispatch, L"[-] Error deleting task folder %s: %lX\n", taskpath, hr);
 			goto cleanUp;		
 		}
-		BadgerDispatch(g_dispatch, "[+] Deleted the task folder: %ls\n", taskpath);
+		BadgerDispatchW(g_dispatch, L"[+] Deleted the task folder: %s\n", taskpath);
 	} else {
 		hr = pRootFolder->lpVtbl->GetTask(pRootFolder, taskpath, &pRegisteredTask);
 		if (FAILED(hr)) {
-			BadgerDispatch(g_dispatch, "[-] Error fetching task task: %S: %lX\n", taskpath, hr);
+			BadgerDispatchW(g_dispatch, L"[-] Error fetching task task: %s: %lX\n", taskpath, hr);
 			BadgerDispatch(g_dispatch, "[!] NOTE: When using delete, you must give the full path and name of the task\n");
 			goto cleanUp;
 		}
 		hr = pRegisteredTask->lpVtbl->Stop(pRegisteredTask, 0);
 		if (FAILED(hr)) {
-			BadgerDispatch(g_dispatch, "[-] Error stopping task: %S: %lX\n", taskpath, hr);
+			BadgerDispatchW(g_dispatch, L"[-] Error stopping task: %s: %lX\n", taskpath, hr);
 			goto cleanUp;
 		}
 		pRegisteredTask->lpVtbl->Release(pRegisteredTask);
 		pRegisteredTask = NULL;
 		hr = pRootFolder->lpVtbl->DeleteTask(pRootFolder, taskpath, 0);
 		if (FAILED(hr)) {
-			BadgerDispatch(g_dispatch, "[-] Error deleting the task: %S: %lX\n", taskpath, hr);
+			BadgerDispatchW(g_dispatch, L"[-] Error deleting the task: %s: %lX\n", taskpath, hr);
 			goto cleanUp;
 		}
-		BadgerDispatch(g_dispatch, "[+] Deleted the task: %S\n", taskpath);
+		BadgerDispatchW(g_dispatch, L"[+] Deleted the task: %s\n", taskpath);
 	}
 cleanUp:
 	if (taskpath) {
@@ -146,7 +146,7 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
 	}
 	ConvertCharToWChar(argv[1], &whostname);
 	ConvertCharToWChar(argv[2], &wtaskname_folder);
-	BadgerDispatch(dispatch, "[+] Deleting:\n  - Hostname: %ls\n  - %s: %ls\n  - Type: %s\n", whostname, ( isfolder ? "Taskfolder" : "Taskname"), wtaskname_folder, argv[0]);
+	BadgerDispatchW(dispatch, L"[+] Deleting:\n  - Hostname: %s\n  - %s: %s\n", whostname, ( isfolder ? L"Taskfolder" : L"Taskname"), wtaskname_folder);
 	deleteTask(whostname, wtaskname_folder, isfolder);
 	BadgerFree((PVOID*)&whostname);
 	BadgerFree((PVOID*)&wtaskname_folder);

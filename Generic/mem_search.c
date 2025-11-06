@@ -67,7 +67,7 @@ void SearchMemory(HANDLE hProcess, char *search_string) {
                         }
                         WCHAR *finalString = BadgerAlloc(sizeOfStr + 2);
                         BadgerMemcpy(finalString, stringStart, sizeOfStr);
-                        BadgerDispatch(g_dispatch, "[w] Wchar string (0x%p): %ls\n", (PVOID)(buffer + i), finalString);
+                        BadgerDispatchW(g_dispatch, L"[w] Wchar string (0x%p): %s\n", (PVOID)(buffer + i), finalString);
                         BadgerFree((PVOID*)&finalString);
                     }
                 }

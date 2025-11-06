@@ -99,13 +99,13 @@ void coffee(char** argv, int argc, WCHAR** dispatch) {
     ConvertCharToWChar(argv[3], &w_ruleGroup);
     ConvertCharToWChar(argv[4], &w_ruleDescription);
     BSTR ruleName = OleAut32$SysAllocString(w_ruleName);
-    BadgerDispatch(dispatch, "[*] Rule Name: %S\n", ruleName);
+    BadgerDispatchW(dispatch, L"[*] Rule Name: %s\n", ruleName);
     BSTR ruleDescription = OleAut32$SysAllocString(w_ruleDescription);
-    BadgerDispatch(dispatch, "[*] Rule Description: %S\n", ruleDescription);
+    BadgerDispatchW(dispatch, L"[*] Rule Description: %s\n", ruleDescription);
     BSTR ruleGroup = OleAut32$SysAllocString(w_ruleGroup);
-    BadgerDispatch(dispatch, "[*] Rule Group: %S\n", ruleGroup);
+    BadgerDispatchW(dispatch, L"[*] Rule Group: %s\n", ruleGroup);
     BSTR localPorts = OleAut32$SysAllocString(w_localPorts);
-    BadgerDispatch(dispatch, "[*] Local Port: %S\n", localPorts);
+    BadgerDispatchW(dispatch, L"[*] Local Port: %s\n", localPorts);
     if (BadgerStrcmp(directionOption, "in") == 0) {
         NET_FW_RULE_DIRECTION direction = NET_FW_RULE_DIR_IN;
         hr = AllowFirewallRule(ruleName, ruleDescription, ruleGroup, direction, localPorts, protocol);
